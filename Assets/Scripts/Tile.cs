@@ -13,17 +13,7 @@ public class Tile : MonoBehaviour
     private Image _tileIcon;
 
     private int _maxTileTypes;
-
-    private void Awake()
-    {
-        _mainBoard = MainBoard.Instance;
-        _maxTileTypes = _mainBoard.tileColorNumber;
-    }
-
-    void Start()
-    {
-        tileNumber = Random.Range(0, _maxTileTypes);
-    }
+    
 }
 
 

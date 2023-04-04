@@ -28,7 +28,6 @@ public class MainBoard : MonoBehaviour
 
     private void Awake()
     {
-        StaticInstanceNullCheck();
         inputController = gameObject.GetComponent<InputController>();
     }
 
@@ -57,17 +56,7 @@ public class MainBoard : MonoBehaviour
         tileCountHeight = inputController.tileCountHeightInput;
         tileColorNumber = inputController.colorNumberInput;
     }
-    private void StaticInstanceNullCheck()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-    
+
     private void AddTiles()
     {
         GameObject[] previousLeftTile = new GameObject[tileCountHeight];
@@ -81,19 +70,15 @@ public class MainBoard : MonoBehaviour
             tileRow.name = $"[{heightIndex}] " + tileRow.name;
             for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
             {
-                //GameObject possibleTiles = new GameObject();
-                GameObject tile = Instantiate(InputRandomCommonTile(), tileRow.transform);
+                int tileNumber = Random.Range(0, tileColorNumber);
+                GameObject tile = Instantiate(tileCommonPrefab[tileNumber], tileRow.transform);
                 tile.name = $"[{heightIndex}][{widthIndex}] " + tile.name;
+                tile.GetComponent<Tile>().tileNumber = tileNumber;
                 _mainBoardArr[heightIndex, widthIndex] = tile;
             }
         }
     }
-    private GameObject InputRandomCommonTile()
-    {
-        int tileNumber = Random.Range(0, tileCommonPrefab.Length);
-        return tileCommonPrefab[tileNumber];
-    }
-    
+
     //Separate FileTileArray + Tile Instantiate realisation
     /*
     private void FillTileArray()
