@@ -16,9 +16,9 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     
     public int tileNumber;
     public bool isEmpty = false;
-    private bool isSelected = false;
-
-    private Image backgroundImage;
+    [SerializeField] private bool isSelected = false;
+    //TODO make private again
+    public Image backgroundImage;
     private void Awake()
     {
         backgroundImage = gameObject.GetComponent<Image>();
@@ -34,27 +34,29 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     {
         if (isEmpty || MainBoard.Instance.IsShifting)
         {
-            Debug.Log("2");
             return;
         }
 
         if (isSelected)
         {
-            Debug.Log("3");
-            Deselect();
+            Deselect(gameObject);
         }
         else
         {
             if (previousSelectedTile == null)
             {
-                Debug.Log("4");
                 Select();
             }
             else
             {
-                if (IsTileNearby())
+                if (IsTileNearby() && (tileNumber != previousSelectedTile.tileNumber))
                 {
                     MainBoard.Instance.SwapTiles(previousSelectedTile, this);
+                }
+                else
+                {
+                    Deselect(previousSelectedTile.gameObject);
+                    Debug.Log("They are the same!");
                 }
             }
         }
@@ -65,10 +67,11 @@ public class Tile : MonoBehaviour, IPointerDownHandler
         backgroundImage.color = Color.gray;
         previousSelectedTile = gameObject.GetComponent<Tile>();
     }
-    private void Deselect()
+    private void Deselect(GameObject tile)
     {
         isSelected = false;
-        gameObject.GetComponent<Image>().color = Color.red;
+        tile.GetComponent<Image>().color = Color.red;
+        previousSelectedTile.isSelected = false;
         previousSelectedTile = null;
     }
     private bool IsTileNearby()
@@ -79,10 +82,8 @@ public class Tile : MonoBehaviour, IPointerDownHandler
 
         if ((isXTileNear && (yData == previousSelectedTile.yData)) || (isYTileNear && (xData == previousSelectedTile.xData)))
         {
-            Debug.Log("true");
             return true;
         }
-        Debug.Log("false");
         return false;
     }
     
