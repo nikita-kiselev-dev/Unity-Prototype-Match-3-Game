@@ -17,9 +17,7 @@ public class MainBoard : MonoBehaviour
     [SerializeField] private GameObject[] tileCommonPrefab;
 
     [SerializeField] private GameObject[] tileSpecialPrefab;
-
-    //TODO переместить в GetMatch
-    [SerializeField] private List<GameObject> matchingTiles;
+    
     //private GameObject tilePrefab;
 
     private bool isGameActive;
@@ -120,17 +118,18 @@ public class MainBoard : MonoBehaviour
 
     private void FindMatch(string axis, int y, int x)
     {
+        List<GameObject> matchingTiles = new List<GameObject>();
         matchingTiles.Add(_mainBoardArr[y, x]);
         Debug.Log("first tile: " + matchingTiles[0]);
         
         switch (axis)
         {
             case "vertical":
-                for (int i = y; i < _mainBoardArr.GetLength(0); i++)
+                for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
                 {
                     if (IsForwardTileMatches(i))
                     {
-                        matchingTiles.Add(_mainBoardArr[i + 1, 0]);
+                        matchingTiles.Add(_mainBoardArr[i + 1, x]);
                     }
                     else
                     {
@@ -142,15 +141,22 @@ public class MainBoard : MonoBehaviour
                 {
                     if (isBackwardTileMatches(i))
                     {
-                        matchingTiles.Add(_mainBoardArr[i - 1 , 0]);
+                        matchingTiles.Add(_mainBoardArr[i - 1 , x]);
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
 
-                foreach (var tempTile in matchingTiles)
+                if (matchingTiles.Count >= 3)
                 {
-                    Debug.Log(tempTile);
-                    tempTile.GetComponent<Tile>().isEmpty = true;
-                    tempTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
+                    foreach (var tempTile in matchingTiles)
+                    {
+                        Debug.Log(tempTile);
+                        tempTile.GetComponent<Tile>().isEmpty = true;
+                        tempTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
+                    }
                 }
 
 
@@ -164,8 +170,8 @@ public class MainBoard : MonoBehaviour
         
         bool IsForwardTileMatches(int i)
         {
-            if (_mainBoardArr[i, 0].GetComponent<Tile>().tileNumber ==
-                _mainBoardArr[i + 1, 0].GetComponent<Tile>().tileNumber)
+            if (_mainBoardArr[i, x].GetComponent<Tile>().tileNumber ==
+                _mainBoardArr[i + 1, x].GetComponent<Tile>().tileNumber)
             {
                 return true;
             }
@@ -174,8 +180,8 @@ public class MainBoard : MonoBehaviour
         }
         bool isBackwardTileMatches(int i)
         {
-            if (_mainBoardArr[i, 0].GetComponent<Tile>().tileNumber ==
-                _mainBoardArr[i - 1, 0].GetComponent<Tile>().tileNumber)
+            if (_mainBoardArr[i, x].GetComponent<Tile>().tileNumber ==
+                _mainBoardArr[i - 1, x].GetComponent<Tile>().tileNumber)
             {
                 return true;
             }
