@@ -28,18 +28,19 @@ public class MainBoard : MonoBehaviour
 
     private void Awake()
     {
+        Instance = GetComponent<MainBoard>();
         inputController = gameObject.GetComponent<InputController>();
     }
-
     public void StartGame()
     {
         if (isGameActive)
         {
             CleanMainBoard();
         }
-        isGameActive = true;
         GetBoardStartInfo();
-        AddTiles();
+        BuildBoard(isRebuild:false);
+        //AddTiles();
+        isGameActive = true;
         //FillTileArray();
         //SpawnTile();
     }
@@ -56,13 +57,12 @@ public class MainBoard : MonoBehaviour
         tileCountHeight = inputController.tileCountHeightInput;
         tileColorNumber = inputController.colorNumberInput;
     }
-
-    private void AddTiles()
+    private void BuildBoard(bool isRebuild)
     {
-        GameObject[] previousLeftTile = new GameObject[tileCountHeight];
-        GameObject previousBelowTile = null;
-        
-        _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
+        if (!isRebuild)
+        {
+            _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
+        }
         GameObject mainBoard = GameObject.FindWithTag("Main Board");
         for (int heightIndex = 0; heightIndex < tileCountHeight; heightIndex++)
         {
@@ -70,13 +70,37 @@ public class MainBoard : MonoBehaviour
             tileRow.name = $"[{heightIndex}] " + tileRow.name;
             for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
             {
-                int tileNumber = Random.Range(0, tileColorNumber);
+                int tileNumber = 0;
+                if (!isRebuild)
+                {
+                    tileNumber = Random.Range(0, tileColorNumber);
+                }
+                else
+                {
+                    tileNumber = _mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>().tileNumber;
+                }
                 GameObject tile = Instantiate(tileCommonPrefab[tileNumber], tileRow.transform);
                 tile.name = $"[{heightIndex}][{widthIndex}] " + tile.name;
-                tile.GetComponent<Tile>().tileNumber = tileNumber;
+
+                Tile tileInfo = tile.GetComponent<Tile>();
+                tileInfo.tileNumber = tileNumber;
+                tileInfo.xData = widthIndex;
+                tileInfo.yData = heightIndex;
+                
                 _mainBoardArr[heightIndex, widthIndex] = tile;
             }
+
         }
+    }
+    public void SwapTiles(Tile previousSelectedTile, Tile currentTile)
+    {
+        Tile tempGameObject = Tile.previousSelectedTile;
+        _mainBoardArr[previousSelectedTile.yData, previousSelectedTile.xData] = 
+            _mainBoardArr[currentTile.yData, currentTile.xData];
+        _mainBoardArr[currentTile.yData, currentTile.xData] = 
+            tempGameObject.gameObject;
+        CleanMainBoard();
+        BuildBoard(isRebuild:true);
     }
 
     //Separate FileTileArray + Tile Instantiate realisation
@@ -111,4 +135,30 @@ public class MainBoard : MonoBehaviour
        }
    }
    */
+    //Old BuildBoard method
+    /*
+    private void AddTiles()
+    {
+        _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
+        GameObject mainBoard = GameObject.FindWithTag("Main Board");
+        for (int heightIndex = 0; heightIndex < tileCountHeight; heightIndex++)
+        {
+            GameObject tileRow = Instantiate(rowPrefab, mainBoard.transform);
+            tileRow.name = $"[{heightIndex}] " + tileRow.name;
+            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            {
+                int tileNumber = Random.Range(0, tileColorNumber);
+                GameObject tile = Instantiate(tileCommonPrefab[tileNumber], tileRow.transform);
+                tile.name = $"[{heightIndex}][{widthIndex}] " + tile.name;
+
+                Tile tileInfo = tile.GetComponent<Tile>();
+                tileInfo.tileNumber = tileNumber;
+                tileInfo.xData = widthIndex;
+                tileInfo.yData = heightIndex;
+                
+                _mainBoardArr[heightIndex, widthIndex] = tile;
+            }
+        }
+    }
+    */
 }
