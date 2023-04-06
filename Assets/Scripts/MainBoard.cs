@@ -195,83 +195,7 @@ public class MainBoard : MonoBehaviour
         {
             matchingTilesHorizontal.Clear();
         }
-
-        //Debug.Log(Math.Max(matchingTilesHorizontal.Count, matchingTilesVertical.Count));
-        /////////
-        /*
-        switch (axis)
-        {
-            case "vertical":
-                for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
-                {
-                    if (IsForwardTileMatches(i))
-                    {
-                        matchingTiles.Add(_mainBoardArr[i + 1, x]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                for (int i = y; i > 0; i--)
-                {
-                    if (isBackwardTileMatches(i))
-                    {
-                        matchingTiles.Add(_mainBoardArr[i - 1, x]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (matchingTiles.Count >= 3)
-                {
-                    yMatchingTilesNumber = matchingTiles.Count;
-                    foreach (var sameTile in matchingTiles)
-                    {
-                        sameTile.GetComponent<Tile>().isEmpty = true;
-                        sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
-                    }
-                }
-                break;
-            case "horizontal":
-                for (int i = y; i < _mainBoardArr.GetLength(1) - 1; i++)
-                {
-                    if (IsForwardTileMatches(i))
-                    {
-                        matchingTiles.Add(_mainBoardArr[y , i + 1]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                for (int i = y; i > 0; i--)
-                {
-                    if (isBackwardTileMatches(i))
-                    {
-                        matchingTiles.Add(_mainBoardArr[y, i - 1]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (matchingTiles.Count >= 3)
-                {
-                    xMatchingTilesNumber = matchingTiles.Count;
-                    foreach (var sameTile in matchingTiles)
-                    {
-                        sameTile.GetComponent<Tile>().isEmpty = true;
-                        sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
-                    }
-                }
-                break;
-            default:
-                Debug.Log("Incorrect axis");
-                break;
-        }
-        */
+        
         bool IsForwardTileMatches(int i, string orientation)
         {
             switch (orientation)
@@ -317,7 +241,6 @@ public class MainBoard : MonoBehaviour
         }
         
         GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
-        DestroyMatch(matchingTilesVertical, matchingTilesHorizontal);
     }
 
     private void GetMatchPoints(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
@@ -331,35 +254,32 @@ public class MainBoard : MonoBehaviour
 
             return false;
         }
-
+        
+        List<GameObject> matchedTiles = new List<GameObject>();
+        matchedTiles.AddRange(matchingTilesVertical);
+        matchedTiles.AddRange(matchingTilesHorizontal);
+        
         if (MultipleAxisMatch())
         {
-            points += matchingTilesVertical.Count + matchingTilesHorizontal.Count - 1;
+            points += matchedTiles.Count - 1;
         }
         else
         {
-            points += matchingTilesVertical.Count + matchingTilesHorizontal.Count;
+            points += matchedTiles.Count;
         }
+        DestroyMatchTiles(matchedTiles);
     }
-    private void DestroyMatch(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
+    private void DestroyMatchTiles(List<GameObject> matchedTiles)
     {
-        Debug.Log("ver: " + matchingTilesVertical.Count);
-        Debug.Log("hor: " + matchingTilesHorizontal.Count);
-        
-        string longerListAxisLenght()
+        for (int i = 0; i < matchedTiles.Count; i++)
         {
-            if (matchingTilesVertical.Count > matchingTilesHorizontal.Count)
-            {
-                Debug.Log("+");
-                return nameof(matchingTilesVertical);
-            }
-            Debug.Log("-");
-            return nameof(matchingTilesHorizontal);
+            var tempYData = matchedTiles[i].GetComponent<Tile>().yData;
+            var tempXData = matchedTiles[i].GetComponent<Tile>().xData;
+            _mainBoardArr[tempYData, tempXData] = tileEmptyPrefab;
+
         }
-        
-        
-        
-        
-        Debug.Log(longerListAxisLenght());
+        matchedTiles.Clear();
+        CleanMainBoard();
+        BuildBoard(isRebuild: true);
     }
 }

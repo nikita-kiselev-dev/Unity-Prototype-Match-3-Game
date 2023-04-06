@@ -90,7 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xData: 0
   yData: 0
-  tileNumber: 0
+  tileNumber: 5
   isEmpty: 1
   isSelected: 0
   backgroundImage: {fileID: 0}
