@@ -118,10 +118,79 @@ public class MainBoard : MonoBehaviour
 
     private void FindMatch(string axis, int y, int x)
     {
-        List<GameObject> matchingTiles = new List<GameObject>();
-        matchingTiles.Add(_mainBoardArr[y, x]);
-        Debug.Log("first tile: " + matchingTiles[0]);
+        List<GameObject> matchingTilesVertical = new List<GameObject>();
+        List<GameObject> matchingTilesHorizontal = new List<GameObject>();
         
+        matchingTilesVertical.Add(_mainBoardArr[y, x]);
+        Debug.Log("first tile: " + matchingTilesVertical[0]);
+        //////////
+        for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
+        {
+            if (IsForwardTileMatches(i, "vertical"))
+            {
+                matchingTilesVertical.Add(_mainBoardArr[i + 1, x]);
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (int i = y; i > 0; i--)
+        {
+            if (isBackwardTileMatches(i, "vertical"))
+            {
+                matchingTilesVertical.Add(_mainBoardArr[i - 1, x]);
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (matchingTilesVertical.Count >= 3)
+        {
+            foreach (var sameTile in matchingTilesVertical)
+            {
+                sameTile.GetComponent<Tile>().isEmpty = true;
+                sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
+            }
+        }
+        ///////
+        matchingTilesHorizontal.Add(_mainBoardArr[y, x]);
+        Debug.Log("first tile: " + matchingTilesHorizontal[0]);
+        for (int i = x; i < _mainBoardArr.GetLength(1) - 1; i++)
+        {
+            if (IsForwardTileMatches(i, "horizontal"))
+            {
+                matchingTilesHorizontal.Add(_mainBoardArr[y , i + 1]);
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (int i = x; i > 0; i--)
+        {
+            if (isBackwardTileMatches(i, "horizontal"))
+            {
+                matchingTilesHorizontal.Add(_mainBoardArr[y, i - 1]);
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (matchingTilesHorizontal.Count >= 3)
+        {
+            foreach (var sameTile in matchingTilesHorizontal)
+            {
+                sameTile.GetComponent<Tile>().isEmpty = true;
+                sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
+            }
+        }
+
+        //Debug.Log(Math.Max(matchingTilesHorizontal.Count, matchingTilesVertical.Count));
+        /////////
+        /*
         switch (axis)
         {
             case "vertical":
@@ -136,115 +205,107 @@ public class MainBoard : MonoBehaviour
                         break;
                     }
                 }
-
                 for (int i = y; i > 0; i--)
                 {
                     if (isBackwardTileMatches(i))
                     {
-                        matchingTiles.Add(_mainBoardArr[i - 1 , x]);
+                        matchingTiles.Add(_mainBoardArr[i - 1, x]);
                     }
                     else
                     {
                         break;
                     }
                 }
-
                 if (matchingTiles.Count >= 3)
                 {
-                    foreach (var tempTile in matchingTiles)
+                    yMatchingTilesNumber = matchingTiles.Count;
+                    foreach (var sameTile in matchingTiles)
                     {
-                        Debug.Log(tempTile);
-                        tempTile.GetComponent<Tile>().isEmpty = true;
-                        tempTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
+                        sameTile.GetComponent<Tile>().isEmpty = true;
+                        sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
                     }
                 }
-
-
                 break;
             case "horizontal":
+                for (int i = y; i < _mainBoardArr.GetLength(1) - 1; i++)
+                {
+                    if (IsForwardTileMatches(i))
+                    {
+                        matchingTiles.Add(_mainBoardArr[y , i + 1]);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                for (int i = y; i > 0; i--)
+                {
+                    if (isBackwardTileMatches(i))
+                    {
+                        matchingTiles.Add(_mainBoardArr[y, i - 1]);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (matchingTiles.Count >= 3)
+                {
+                    xMatchingTilesNumber = matchingTiles.Count;
+                    foreach (var sameTile in matchingTiles)
+                    {
+                        sameTile.GetComponent<Tile>().isEmpty = true;
+                        sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
+                    }
+                }
                 break;
             default:
                 Debug.Log("Incorrect axis");
                 break;
         }
-        
-        bool IsForwardTileMatches(int i)
+        */
+        bool IsForwardTileMatches(int i, string orientation)
         {
-            if (_mainBoardArr[i, x].GetComponent<Tile>().tileNumber ==
-                _mainBoardArr[i + 1, x].GetComponent<Tile>().tileNumber)
+            switch (orientation)
             {
-                return true;
+                case "vertical":
+                    if (_mainBoardArr[i, x].GetComponent<Tile>().tileNumber ==
+                        _mainBoardArr[i + 1, x].GetComponent<Tile>().tileNumber)
+                    {
+                        return true;
+                    }
+                    break;
+                case "horizontal":
+                    if (_mainBoardArr[y, i].GetComponent<Tile>().tileNumber ==
+                        _mainBoardArr[y, i + 1].GetComponent<Tile>().tileNumber)
+                    {
+                        return true;
+                    }
+                    break;
             }
 
             return false;
         }
-        bool isBackwardTileMatches(int i)
+        bool isBackwardTileMatches(int i, string orientation)
         {
-            if (_mainBoardArr[i, x].GetComponent<Tile>().tileNumber ==
-                _mainBoardArr[i - 1, x].GetComponent<Tile>().tileNumber)
+            switch (orientation)
             {
-                return true;
+                case "vertical":
+                    if (_mainBoardArr[i, x].GetComponent<Tile>().tileNumber ==
+                        _mainBoardArr[i - 1, x].GetComponent<Tile>().tileNumber)
+                    {
+                        return true;
+                    }
+                    break;
+                case "horizontal":
+                    if (_mainBoardArr[y, i].GetComponent<Tile>().tileNumber ==
+                        _mainBoardArr[y, i - 1].GetComponent<Tile>().tileNumber)
+                    {
+                        return true;
+                    }
+                    break;
             }
             return false;
         }
-        
-        //Separate FileTileArray + Tile Instantiate realisation
-        /*
-        private void FillTileArray()
-       {
-           _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
-           for (int heightIndex = 0; heightIndex < _mainBoardArr.GetLength(0); heightIndex++)
-           {
-               for (int widthIndex = 0; widthIndex < _mainBoardArr.GetLength(1); widthIndex++)
-               {
-                   int tileNumber = Random.Range(0, tileColorNumber);
-                   _mainBoardArr[heightIndex, widthIndex] = tileCommonPrefab[tileNumber];
-               }
-           }
-       }
-       /*
-        /*
-       private void SpawnTile()
-       {
-           GameObject[] previousLeftTile = new GameObject[tileCountHeight];
-           GameObject previousBelowTile = null;
-           for (int heightIndex = 0; heightIndex < _mainBoardArr.GetLength(0); heightIndex++)
-           {
-               GameObject tileRow = Instantiate(rowPrefab, mainBoard.transform);
-               tileRow.name = $"[{heightIndex}] " + tileRow.name;
-               for (int widthIndex = 0; widthIndex < _mainBoardArr.GetLength(1); widthIndex++)
-               {
-                   GameObject tile = Instantiate(_mainBoardArr[heightIndex, widthIndex], tileRow.transform);
-                   tile.name = $"[{heightIndex}][{widthIndex}] " + tile.name;
-               }
-           }
-       }
-       */
-        //Old BuildBoard method
-        /*
-        private void AddTiles()
-        {
-            _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
-            GameObject mainBoard = GameObject.FindWithTag("Main Board");
-            for (int heightIndex = 0; heightIndex < tileCountHeight; heightIndex++)
-            {
-                GameObject tileRow = Instantiate(rowPrefab, mainBoard.transform);
-                tileRow.name = $"[{heightIndex}] " + tileRow.name;
-                for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
-                {
-                    int tileNumber = Random.Range(0, tileColorNumber);
-                    GameObject tile = Instantiate(tileCommonPrefab[tileNumber], tileRow.transform);
-                    tile.name = $"[{heightIndex}][{widthIndex}] " + tile.name;
-    
-                    Tile tileInfo = tile.GetComponent<Tile>();
-                    tileInfo.tileNumber = tileNumber;
-                    tileInfo.xData = widthIndex;
-                    tileInfo.yData = heightIndex;
-                    
-                    _mainBoardArr[heightIndex, widthIndex] = tile;
-                }
-            }
-        }
-        */
     }
 }
