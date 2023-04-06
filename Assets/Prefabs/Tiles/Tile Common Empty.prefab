@@ -91,4 +91,6 @@ MonoBehaviour:
   xData: 0
   yData: 0
   tileNumber: 0
-  isEmpty: 0
+  isEmpty: 1
+  isSelected: 0
+  backgroundImage: {fileID: 0}

@@ -17,7 +17,7 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     public int tileNumber;
     public bool isEmpty = false;
     [SerializeField] private bool isSelected = false;
-    //TODO make private again
+    //TODO make private
     public Image backgroundImage;
     private void Awake()
     {
@@ -86,30 +86,6 @@ public class Tile : MonoBehaviour, IPointerDownHandler
         }
         return false;
     }
-    
-    /*
-   private GameObject GetTilesNearby(Vector2 raycastDirection)
-   {
-       RaycastHit2D hit = Physics2D.Raycast(transform.position, raycastDirection);
-       if (hit.collider != null) 
-       {
-           Debug.Log("Tile found!");
-           return hit.collider.gameObject;
-       }
-       Debug.Log("Tile not found!");
-       return null;
-   }
-   private List<GameObject> GetAllTilesNearby()
-   {
-       List<GameObject> tilesNearby = new List<GameObject>();
-       for (int directionIndex = 0; directionIndex < raycastDirections.Length; directionIndex++)
-       {
-           tilesNearby.Add(GetTilesNearby(raycastDirections[directionIndex]));
-       }
-       return tilesNearby;
-   }
-*/
-
 }
 
 

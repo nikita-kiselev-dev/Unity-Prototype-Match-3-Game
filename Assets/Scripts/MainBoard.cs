@@ -9,16 +9,15 @@ public class MainBoard : MonoBehaviour
 {
     public static MainBoard Instance;
 
+    [SerializeField] private int points = 0;
+
     [SerializeField] private int tileCountWidth;
     [SerializeField] private int tileCountHeight;
     public int tileColorNumber;
 
     [SerializeField] private GameObject rowPrefab;
     [SerializeField] private GameObject[] tileCommonPrefab;
-
-    [SerializeField] private GameObject[] tileSpecialPrefab;
-    
-    //private GameObject tilePrefab;
+    [SerializeField] private GameObject tileEmptyPrefab;
 
     private bool isGameActive;
     public bool IsShifting { get; set; }
@@ -69,6 +68,7 @@ public class MainBoard : MonoBehaviour
     {
         if (!isRebuild)
         {
+            points = 0;
             _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
         }
 
@@ -137,7 +137,7 @@ public class MainBoard : MonoBehaviour
         }
         for (int i = y; i > 0; i--)
         {
-            if (isBackwardTileMatches(i, "vertical"))
+            if (IsBackwardTileMatches(i, "vertical"))
             {
                 matchingTilesVertical.Add(_mainBoardArr[i - 1, x]);
             }
@@ -153,6 +153,10 @@ public class MainBoard : MonoBehaviour
                 sameTile.GetComponent<Tile>().isEmpty = true;
                 sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
             }
+        }
+        else
+        {
+            matchingTilesVertical.Clear();
         }
         ///////
         matchingTilesHorizontal.Add(_mainBoardArr[y, x]);
@@ -170,7 +174,7 @@ public class MainBoard : MonoBehaviour
         }
         for (int i = x; i > 0; i--)
         {
-            if (isBackwardTileMatches(i, "horizontal"))
+            if (IsBackwardTileMatches(i, "horizontal"))
             {
                 matchingTilesHorizontal.Add(_mainBoardArr[y, i - 1]);
             }
@@ -186,6 +190,10 @@ public class MainBoard : MonoBehaviour
                 sameTile.GetComponent<Tile>().isEmpty = true;
                 sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
             }
+        }
+        else
+        {
+            matchingTilesHorizontal.Clear();
         }
 
         //Debug.Log(Math.Max(matchingTilesHorizontal.Count, matchingTilesVertical.Count));
@@ -286,7 +294,7 @@ public class MainBoard : MonoBehaviour
 
             return false;
         }
-        bool isBackwardTileMatches(int i, string orientation)
+        bool IsBackwardTileMatches(int i, string orientation)
         {
             switch (orientation)
             {
@@ -307,5 +315,51 @@ public class MainBoard : MonoBehaviour
             }
             return false;
         }
+        
+        GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
+        DestroyMatch(matchingTilesVertical, matchingTilesHorizontal);
+    }
+
+    private void GetMatchPoints(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
+    {
+        bool MultipleAxisMatch()
+        {
+            if (matchingTilesVertical.Count > 1 && matchingTilesHorizontal.Count > 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        if (MultipleAxisMatch())
+        {
+            points += matchingTilesVertical.Count + matchingTilesHorizontal.Count - 1;
+        }
+        else
+        {
+            points += matchingTilesVertical.Count + matchingTilesHorizontal.Count;
+        }
+    }
+    private void DestroyMatch(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
+    {
+        Debug.Log("ver: " + matchingTilesVertical.Count);
+        Debug.Log("hor: " + matchingTilesHorizontal.Count);
+        
+        string longerListAxisLenght()
+        {
+            if (matchingTilesVertical.Count > matchingTilesHorizontal.Count)
+            {
+                Debug.Log("+");
+                return nameof(matchingTilesVertical);
+            }
+            Debug.Log("-");
+            return nameof(matchingTilesHorizontal);
+        }
+        
+        
+        
+        
+        Debug.Log(longerListAxisLenght());
     }
 }
