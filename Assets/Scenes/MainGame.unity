@@ -273,6 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 944fe65d2351b464480ab617a1f99ae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  points: 0
   tileCountWidth: 0
   tileCountHeight: 0
   tileColorNumber: 0
@@ -284,7 +285,7 @@ MonoBehaviour:
   - {fileID: 6448531670989743043, guid: a5588439d53497f43804c207b16ab2f2, type: 3}
   - {fileID: 8829010032302985996, guid: 57feda85d9c0c114a9e7a5f9ae97373d, type: 3}
   - {fileID: 6296603104566034979, guid: 41b4207f83745be4fb0bfd18041f9950, type: 3}
-  tileSpecialPrefab: []
+  tileEmptyPrefab: {fileID: 6296603104566034979, guid: 41b4207f83745be4fb0bfd18041f9950, type: 3}
   mainBoard: {fileID: 54111943}
 --- !u!4 &188370047
 Transform:
@@ -1236,148 +1237,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.667, y: 0}
   m_SizeDelta: {x: 853.7277, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1001 &1046381341
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 640
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 437
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 606635479960897002, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296603104566034979, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-      propertyPath: m_Name
-      value: Tile Common Blue
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
---- !u!1 &1046381342 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6296603104566034979, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-  m_PrefabInstance: {fileID: 1046381341}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1046381343 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1162573227686343863, guid: 965368d0bbe52e34881b3a1648e6b2fb, type: 3}
-  m_PrefabInstance: {fileID: 1046381341}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1046381342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ed4157c2472b274094d59af8586a90e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1046381344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1046381342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1046381343}
-          m_TargetAssemblyTypeName: Tile, Assembly-CSharp
-          m_MethodName: OnMouseDown
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!1 &1135514286
 GameObject:
   m_ObjectHideFlags: 0

@@ -48,7 +48,6 @@ public class MainBoard : MonoBehaviour
         //FillTileArray();
         //SpawnTile();
     }
-
     private void CleanMainBoard()
     {
         foreach (Transform child in mainBoard.transform)
@@ -72,7 +71,7 @@ public class MainBoard : MonoBehaviour
             _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
         }
 
-        GameObject mainBoard = GameObject.FindWithTag("Main Board");
+        //GameObject mainBoard = GameObject.FindWithTag("Main Board");
         for (int heightIndex = 0; heightIndex < tileCountHeight; heightIndex++)
         {
             GameObject tileRow = Instantiate(rowPrefab, mainBoard.transform);
@@ -122,7 +121,7 @@ public class MainBoard : MonoBehaviour
         List<GameObject> matchingTilesHorizontal = new List<GameObject>();
         
         matchingTilesVertical.Add(_mainBoardArr[y, x]);
-        Debug.Log("first tile: " + matchingTilesVertical[0]);
+
         //////////
         for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
         {
@@ -160,7 +159,6 @@ public class MainBoard : MonoBehaviour
         }
         ///////
         matchingTilesHorizontal.Add(_mainBoardArr[y, x]);
-        Debug.Log("first tile: " + matchingTilesHorizontal[0]);
         for (int i = x; i < _mainBoardArr.GetLength(1) - 1; i++)
         {
             if (IsForwardTileMatches(i, "horizontal"))
@@ -315,9 +313,9 @@ public class MainBoard : MonoBehaviour
             }
             return false;
         }
-        
+        CleanMainBoard();
+        BuildBoard(isRebuild: true);
         GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
-        DestroyMatch(matchingTilesVertical, matchingTilesHorizontal);
     }
 
     private void GetMatchPoints(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
@@ -331,21 +329,24 @@ public class MainBoard : MonoBehaviour
 
             return false;
         }
-
+        
+        List<GameObject> matchedTiles = new List<GameObject>();
+        matchedTiles.AddRange(matchingTilesVertical);
+        matchedTiles.AddRange(matchingTilesHorizontal);
+        
         if (MultipleAxisMatch())
         {
-            points += matchingTilesVertical.Count + matchingTilesHorizontal.Count - 1;
+            points += matchedTiles.Count - 1;
         }
         else
         {
-            points += matchingTilesVertical.Count + matchingTilesHorizontal.Count;
+            points += matchedTiles.Count;
         }
+        DestroyMatchTiles(matchedTiles);
     }
-    private void DestroyMatch(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
+    private void DestroyMatchTiles(List<GameObject> matchedTiles)
     {
-        Debug.Log("ver: " + matchingTilesVertical.Count);
-        Debug.Log("hor: " + matchingTilesHorizontal.Count);
-        
+        /*
         string longerListAxisLenght()
         {
             if (matchingTilesVertical.Count > matchingTilesHorizontal.Count)
@@ -356,10 +357,68 @@ public class MainBoard : MonoBehaviour
             Debug.Log("-");
             return nameof(matchingTilesHorizontal);
         }
-        
-        
-        
-        
-        Debug.Log(longerListAxisLenght());
+        */
+        for (int i = 0; i < matchedTiles.Count; i++)
+        {
+            var tempYData = matchedTiles[i].GetComponent<Tile>().yData;
+            var tempXData = matchedTiles[i].GetComponent<Tile>().xData;
+            _mainBoardArr[tempYData, tempXData] = tileEmptyPrefab;
+
+        }
+        matchedTiles.Clear();
+        CleanMainBoard();
+        BuildBoard(isRebuild: true);
+        //MoveTilesDown();
+    }
+
+    private void MoveTilesDown()
+    {
+        int i = 0;
+        Debug.Log(i);
+        i++;
+        do
+        {
+            Debug.Log($"I: {i}");
+            i++;
+
+            for (int heightIndex = 0; heightIndex < tileCountHeight - 1; heightIndex++)
+            {
+                for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+                {
+                    Tile currentTile = _mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>();
+                    Tile lowerTile = _mainBoardArr[heightIndex + 1, widthIndex].GetComponent<Tile>();
+                        if (currentTile.isEmpty == false &&
+                            lowerTile.isEmpty)
+                        {
+                            Debug.Log("lower tile before: " +  _mainBoardArr[lowerTile.yData, lowerTile.xData]);
+                            _mainBoardArr[lowerTile.yData, lowerTile.xData] = currentTile.gameObject;
+                            Debug.Log("lower tile after: " +  _mainBoardArr[lowerTile.yData, lowerTile.xData]);
+                            Debug.Log("current tile before: " +  _mainBoardArr[currentTile.yData, currentTile.xData]);
+                            _mainBoardArr[currentTile.yData, currentTile.xData] = tileEmptyPrefab;
+                            Debug.Log("current tile after: " +  _mainBoardArr[currentTile.yData, currentTile.xData]);
+                        }
+                }
+            }
+        } while (i < 1);
+        CleanMainBoard();
+        BuildBoard(isRebuild: true);
+    }
+
+    private bool IsTileSwapDownNeeded()
+    {
+        for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
+        {
+            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            {
+                Tile currentTile = _mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>();
+                Tile upperTile = _mainBoardArr[heightIndex - 1, widthIndex].GetComponent<Tile>();
+                if (currentTile.isEmpty && upperTile.isEmpty == false)
+                {
+                    Debug.Log("Ping2");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
