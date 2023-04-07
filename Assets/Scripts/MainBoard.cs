@@ -298,16 +298,27 @@ public class MainBoard : MonoBehaviour
         {
             for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
             {
-                Tile currentTile = _mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>();
+                GameObject currentTileGameObject = _mainBoardArr[heightIndex, widthIndex];
+                GameObject upperTileGameObject = _mainBoardArr[heightIndex - 1, widthIndex];
 
-                if (currentTile.isEmpty)
+                Tile currentTile = currentTileGameObject.GetComponent<Tile>();
+                int yCurrentTile;
+                int xCurrentTile;
+                Tile upperTile = upperTileGameObject.GetComponent<Tile>();
+                int yUpperTile;
+                int xUpperTile;
+
+                if (upperTile.isEmpty == false && currentTile.isEmpty)
                 {
                     Debug.Log("recolor!");
                     currentTile.backgroundImage.color = Color.blue;
+                    _mainBoardArr[currentTile.yData, currentTile.xData] =
+                        _mainBoardArr[upperTile.yData, upperTile.xData];
+                    _mainBoardArr[upperTile.yData, upperTile.xData] = tileEmptyPrefab;
                 }
             }
         }
-        //CleanMainBoard();
-        //BuildBoard(isRebuild: true);
+        CleanMainBoard();
+        BuildBoard(isRebuild: true);
     }
 }
