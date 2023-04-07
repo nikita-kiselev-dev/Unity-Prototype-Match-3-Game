@@ -23,6 +23,8 @@ public class MainBoard : MonoBehaviour
     public bool IsShifting { get; set; }
     private bool isMatch;
 
+    private bool isCheckNeeded;
+
     [SerializeField] private GameObject[,] _mainBoardArr;
     [SerializeField] private GameObject mainBoard;
 
@@ -288,11 +290,11 @@ public class MainBoard : MonoBehaviour
         matchedTiles.Clear();
         CleanMainBoard();
         BuildBoard(isRebuild: true);
-        //EmptyTileChecker();
+        StartCoroutine(MoveTileToGround());
     }
 
     //TODO make private
-    public void EmptyTileChecker()
+    public void EmptyTileMover()
     {
         for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
         {
@@ -302,23 +304,51 @@ public class MainBoard : MonoBehaviour
                 GameObject upperTileGameObject = _mainBoardArr[heightIndex - 1, widthIndex];
 
                 Tile currentTile = currentTileGameObject.GetComponent<Tile>();
-                int yCurrentTile;
-                int xCurrentTile;
                 Tile upperTile = upperTileGameObject.GetComponent<Tile>();
-                int yUpperTile;
-                int xUpperTile;
 
                 if (upperTile.isEmpty == false && currentTile.isEmpty)
                 {
                     Debug.Log("recolor!");
-                    currentTile.backgroundImage.color = Color.blue;
                     _mainBoardArr[currentTile.yData, currentTile.xData] =
                         _mainBoardArr[upperTile.yData, upperTile.xData];
                     _mainBoardArr[upperTile.yData, upperTile.xData] = tileEmptyPrefab;
                 }
             }
         }
-        CleanMainBoard();
-        BuildBoard(isRebuild: true);
+    }
+
+    private bool IsCheckNeeded()
+    {
+        for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
+        {
+            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            {
+                GameObject currentTileGameObject = _mainBoardArr[heightIndex, widthIndex];
+                GameObject upperTileGameObject = _mainBoardArr[heightIndex - 1, widthIndex];
+
+                Tile currentTile = currentTileGameObject.GetComponent<Tile>();
+                Tile upperTile = upperTileGameObject.GetComponent<Tile>();
+
+                if (upperTile.isEmpty == false && currentTile.isEmpty)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    
+    public IEnumerator MoveTileToGround()
+    {
+        while (IsCheckNeeded())
+        {
+            Debug.Log("Iteration");
+            yield return new WaitForSeconds(0.03f);
+            EmptyTileMover();
+            CleanMainBoard();
+            BuildBoard(isRebuild: true);
+        }
+        
     }
 }

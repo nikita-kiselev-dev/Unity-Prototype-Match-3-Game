@@ -598,7 +598,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 188370046}
         m_TargetAssemblyTypeName: MainBoard, Assembly-CSharp
-        m_MethodName: EmptyTileChecker
+        m_MethodName: EmptyTileMover
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

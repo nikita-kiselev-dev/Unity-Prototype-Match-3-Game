@@ -64,13 +64,13 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     private void Select()
     {
         isSelected = true;
-        backgroundImage.color = Color.gray;
+        backgroundImage.color = new Color32(255,203,164,255);
         previousSelectedTile = gameObject.GetComponent<Tile>();
     }
     private void Deselect(GameObject tile)
     {
         isSelected = false;
-        tile.GetComponent<Image>().color = Color.red;
+        tile.GetComponent<Image>().color = Color.white;
         previousSelectedTile.isSelected = false;
         previousSelectedTile = null;
     }
