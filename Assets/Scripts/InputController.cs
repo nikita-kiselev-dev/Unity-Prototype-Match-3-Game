@@ -9,6 +9,11 @@ public class InputController : MonoBehaviour
     [SerializeField] private TMP_InputField tileCountWidth;
     [SerializeField] private TMP_InputField tileCountHeight;
     [SerializeField] private TMP_InputField colorNumber;
+    
+    [SerializeField] private const int MinSize = 10;
+    [SerializeField] private const int MaxSize = 50;
+    [SerializeField] private const int MinColorNumber = 2;
+    [SerializeField] private const int MaxColorNumber = 5;
 
     public int tileCountWidthInput;
     public int tileCountHeightInput;
@@ -23,16 +28,49 @@ public class InputController : MonoBehaviour
 
     public void SaveWidth()
     {
-        tileCountWidthInput = int.Parse(tileCountWidth.text);
+        if (int.Parse(tileCountWidth.text) >= MinSize && int.Parse(tileCountWidth.text) <= MaxSize)
+        {
+            tileCountWidthInput = int.Parse(tileCountWidth.text);
+        }
+        else if (int.Parse(tileCountWidth.text) < MinSize)
+        {
+            tileCountWidth.text = MinSize.ToString();
+        }
+        else if (int.Parse(tileCountWidth.text) > MaxSize)
+        {
+            tileCountWidth.text = MaxSize.ToString();
+        }
     }
 
     public void SaveHeight()
     {
-        tileCountHeightInput = int.Parse(tileCountHeight.text);
+        if (int.Parse(tileCountHeight.text) >= MinSize && int.Parse(tileCountHeight.text) <= MaxSize)
+        {
+            tileCountHeightInput = int.Parse(tileCountHeight.text);
+        }
+        else if (int.Parse(tileCountHeight.text) < MinSize)
+        {
+            tileCountHeight.text = MinSize.ToString();
+        }
+        else if (int.Parse(tileCountHeight.text) > MaxSize)
+        {
+            tileCountHeight.text = MaxSize.ToString();
+        }
     }
 
     public void SaveColor()
     {
-        colorNumberInput = int.Parse(colorNumber.text);
+        if (int.Parse(colorNumber.text) >= MinColorNumber && int.Parse(colorNumber.text) <= MaxColorNumber)
+        {
+            colorNumberInput = int.Parse(colorNumber.text);
+        }
+        else if (int.Parse(colorNumber.text) < MinColorNumber)
+        {
+            colorNumber.text = MinColorNumber.ToString();
+        }
+        else if (int.Parse(colorNumber.text) > MaxColorNumber)
+        {
+            colorNumber.text = MaxColorNumber.ToString();
+        }
     }
 }

@@ -13,6 +13,8 @@ public class MainBoard : MonoBehaviour
 
     [SerializeField] private int tileCountWidth;
     [SerializeField] private int tileCountHeight;
+
+
     public int tileColorNumber;
 
     [SerializeField] private GameObject rowPrefab;
@@ -29,6 +31,9 @@ public class MainBoard : MonoBehaviour
     [SerializeField] private GameObject mainBoard;
 
     private InputController inputController;
+    
+    [SerializeField] private List<GameObject> matchingTilesVertical = new List<GameObject>();
+    [SerializeField] private List<GameObject> matchingTilesHorizontal = new List<GameObject>();
 
     private void Awake()
     {
@@ -112,7 +117,6 @@ public class MainBoard : MonoBehaviour
     public void SwapTiles(Tile previousSelectedTile, Tile currentTile)
     {
         Tile tempGameObject = Tile.previousSelectedTile;
-        Tile chosenTile = _mainBoardArr[currentTile.yData, currentTile.xData].GetComponent<Tile>();
         _mainBoardArr[previousSelectedTile.yData, previousSelectedTile.xData] =
             _mainBoardArr[currentTile.yData, currentTile.xData];
         _mainBoardArr[currentTile.yData, currentTile.xData] =
@@ -120,12 +124,14 @@ public class MainBoard : MonoBehaviour
         CleanMainBoard();
         BuildBoard(isRebuild: true);
         FindMatch(currentTile.yData, currentTile.xData);
+        FindMatch(previousSelectedTile.yData, previousSelectedTile.xData);
+        GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
     }
 
     private void FindMatch(int y, int x)
     {
-        List<GameObject> matchingTilesVertical = new List<GameObject>();
-        List<GameObject> matchingTilesHorizontal = new List<GameObject>();
+        //List<GameObject> matchingTilesVertical = new List<GameObject>();
+        //List<GameObject> matchingTilesHorizontal = new List<GameObject>();
         
         matchingTilesVertical.Add(_mainBoardArr[y, x]);
 
@@ -244,7 +250,7 @@ public class MainBoard : MonoBehaviour
             return false;
         }
         
-        GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
+        //GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
     }
 
     private void GetMatchPoints(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
@@ -344,7 +350,7 @@ public class MainBoard : MonoBehaviour
         while (IsCheckNeeded())
         {
             Debug.Log("Iteration");
-            yield return new WaitForSeconds(0.03f);
+            yield return new WaitForSeconds(1/*0.03f*/);
             EmptyTileMover();
             CleanMainBoard();
             BuildBoard(isRebuild: true);
