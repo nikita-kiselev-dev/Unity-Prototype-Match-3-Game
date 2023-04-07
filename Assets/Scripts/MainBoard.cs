@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 public class MainBoard : MonoBehaviour
 {
@@ -14,7 +15,8 @@ public class MainBoard : MonoBehaviour
     [SerializeField] private int tileCountWidth;
     [SerializeField] private int tileCountHeight;
 
-
+    [SerializeField] private TextMeshProUGUI pointsText;
+    
     public int tileColorNumber;
 
     [SerializeField] private GameObject rowPrefab;
@@ -48,7 +50,7 @@ public class MainBoard : MonoBehaviour
         {
             CleanMainBoard();
         }
-
+        pointsText.text = points.ToString();
         GetBoardStartInfo();
         BuildBoard(isRebuild: false);
         //AddTiles();
@@ -125,8 +127,9 @@ public class MainBoard : MonoBehaviour
         CleanMainBoard();
         BuildBoard(isRebuild: true);
         FindMatch(currentTile.yData, currentTile.xData);
-        FindMatch(previousSelectedTile.yData, previousSelectedTile.xData);
+        //FindMatch(previousSelectedTile.yData, previousSelectedTile.xData);
         GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
+        AudioController.Instance.PlayTileSwapAudio();
     }
 
     private void FindMatch(int y, int x)
@@ -164,6 +167,7 @@ public class MainBoard : MonoBehaviour
             foreach (var sameTile in matchingTilesVertical)
             {
                 sameTile.GetComponent<Tile>().isEmpty = true;
+                ParticleController.Instance.PlayRandomMatchParticle(sameTile.gameObject);
             }
         }
         else
@@ -200,6 +204,7 @@ public class MainBoard : MonoBehaviour
             foreach (var sameTile in matchingTilesHorizontal)
             {
                 sameTile.GetComponent<Tile>().isEmpty = true;
+                ParticleController.Instance.PlayRandomMatchParticle(sameTile.gameObject);
             }
         }
         else
@@ -250,7 +255,6 @@ public class MainBoard : MonoBehaviour
             }
             return false;
         }
-        
         //GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
     }
 
@@ -269,6 +273,12 @@ public class MainBoard : MonoBehaviour
         List<GameObject> matchedTiles = new List<GameObject>();
         matchedTiles.AddRange(matchingTilesVertical);
         matchedTiles.AddRange(matchingTilesHorizontal);
+
+        if (matchedTiles.Count > 1)
+        {
+            AudioController.Instance.PlayTileMatchAudio();
+            //ParticleController.Instance.PlayRandomMatchParticle();
+        }
         
         if (MultipleAxisMatch())
         {
@@ -281,7 +291,7 @@ public class MainBoard : MonoBehaviour
         
         matchingTilesVertical.Clear();
         matchingTilesHorizontal.Clear();
-        
+        pointsText.text = points.ToString();
         DestroyMatchTiles(matchedTiles);
     }
     private void DestroyMatchTiles(List<GameObject> matchedTiles)
@@ -292,6 +302,7 @@ public class MainBoard : MonoBehaviour
             var tempYData = tempTile.yData;
             var tempXData = tempTile.xData;
             _mainBoardArr[tempYData, tempXData] = tileEmptyPrefab;
+            //ParticleController.Instance.PlayRandomMatchParticle(matchedTiles[i].gameObject);
             //Debug.Log(_mainBoardArr[tempYData,tempXData].GetComponent<Tile>().isEmpty);
         }
         matchedTiles.Clear();
@@ -351,7 +362,7 @@ public class MainBoard : MonoBehaviour
         while (IsCheckNeeded())
         {
             Debug.Log("Iteration");
-            yield return new WaitForSeconds(1/*0.03f*/);
+            yield return new WaitForSeconds(0.03f);
             EmptyTileMover();
             CleanMainBoard();
             BuildBoard(isRebuild: true);
