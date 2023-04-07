@@ -43,6 +43,7 @@ public class MainBoard : MonoBehaviour
 
     public void StartGame()
     {
+        inputController.HideWarning();
         if (isGameActive)
         {
             CleanMainBoard();
