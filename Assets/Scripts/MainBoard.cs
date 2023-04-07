@@ -49,7 +49,8 @@ public class MainBoard : MonoBehaviour
         //SpawnTile();
     }
 
-    private void CleanMainBoard()
+    //TODO make private
+    public void CleanMainBoard()
     {
         foreach (Transform child in mainBoard.transform)
         {
@@ -64,15 +65,14 @@ public class MainBoard : MonoBehaviour
         tileColorNumber = inputController.colorNumberInput;
     }
 
-    private void BuildBoard(bool isRebuild)
+    //TODO make private
+    public void BuildBoard(bool isRebuild)
     {
         if (!isRebuild)
         {
             points = 0;
             _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
         }
-
-        GameObject mainBoard = GameObject.FindWithTag("Main Board");
         for (int heightIndex = 0; heightIndex < tileCountHeight; heightIndex++)
         {
             GameObject tileRow = Instantiate(rowPrefab, mainBoard.transform);
@@ -91,13 +91,17 @@ public class MainBoard : MonoBehaviour
 
                 GameObject tile = Instantiate(tileCommonPrefab[tileNumber], tileRow.transform);
                 tile.name = $"[{heightIndex}][{widthIndex}] " + tile.name;
-
+                
+                
                 Tile tileInfo = tile.GetComponent<Tile>();
                 tileInfo.tileNumber = tileNumber;
                 tileInfo.xData = widthIndex;
                 tileInfo.yData = heightIndex;
-
+                
                 _mainBoardArr[heightIndex, widthIndex] = tile;
+                //Debug.Log(_mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>().tileNumber);
+                //Debug.Log(_mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>().isEmpty);
+                
             }
 
         }
@@ -113,16 +117,16 @@ public class MainBoard : MonoBehaviour
             tempGameObject.gameObject;
         CleanMainBoard();
         BuildBoard(isRebuild: true);
-        FindMatch("vertical", currentTile.yData, currentTile.xData);
+        FindMatch(currentTile.yData, currentTile.xData);
     }
 
-    private void FindMatch(string axis, int y, int x)
+    private void FindMatch(int y, int x)
     {
         List<GameObject> matchingTilesVertical = new List<GameObject>();
         List<GameObject> matchingTilesHorizontal = new List<GameObject>();
         
         matchingTilesVertical.Add(_mainBoardArr[y, x]);
-        Debug.Log("first tile: " + matchingTilesVertical[0]);
+
         //////////
         for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
         {
@@ -151,16 +155,15 @@ public class MainBoard : MonoBehaviour
             foreach (var sameTile in matchingTilesVertical)
             {
                 sameTile.GetComponent<Tile>().isEmpty = true;
-                sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
             }
         }
         else
         {
             matchingTilesVertical.Clear();
         }
-        ///////
+
         matchingTilesHorizontal.Add(_mainBoardArr[y, x]);
-        Debug.Log("first tile: " + matchingTilesHorizontal[0]);
+        
         for (int i = x; i < _mainBoardArr.GetLength(1) - 1; i++)
         {
             if (IsForwardTileMatches(i, "horizontal"))
@@ -188,7 +191,6 @@ public class MainBoard : MonoBehaviour
             foreach (var sameTile in matchingTilesHorizontal)
             {
                 sameTile.GetComponent<Tile>().isEmpty = true;
-                sameTile.GetComponent<Tile>().backgroundImage.color = Color.blue;
             }
         }
         else
@@ -267,19 +269,45 @@ public class MainBoard : MonoBehaviour
         {
             points += matchedTiles.Count;
         }
+        
+        matchingTilesVertical.Clear();
+        matchingTilesHorizontal.Clear();
+        
         DestroyMatchTiles(matchedTiles);
     }
     private void DestroyMatchTiles(List<GameObject> matchedTiles)
     {
         for (int i = 0; i < matchedTiles.Count; i++)
         {
-            var tempYData = matchedTiles[i].GetComponent<Tile>().yData;
-            var tempXData = matchedTiles[i].GetComponent<Tile>().xData;
+            Tile tempTile = matchedTiles[i].GetComponent<Tile>();
+            var tempYData = tempTile.yData;
+            var tempXData = tempTile.xData;
             _mainBoardArr[tempYData, tempXData] = tileEmptyPrefab;
-
+            //Debug.Log(_mainBoardArr[tempYData,tempXData].GetComponent<Tile>().isEmpty);
         }
         matchedTiles.Clear();
         CleanMainBoard();
         BuildBoard(isRebuild: true);
+        //EmptyTileChecker();
+    }
+
+    //TODO make private
+    public void EmptyTileChecker()
+    {
+        for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
+        {
+            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            {
+                Tile currentTile = _mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>();
+
+                if (currentTile.isEmpty)
+                {
+                    Debug.Log("recolor!");
+                    currentTile.backgroundImage.color = Color.blue;
+                }
+            }
+        }
+        //CleanMainBoard();
+        //BuildBoard(isRebuild: true);
     }
 }
