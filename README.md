@@ -6,7 +6,7 @@ https://github.com/nikita-kiselev-dev
 Beta
 
 ## Unity WebGL application:
-https://play.unity.com/mg/other/match-3-beta
+https://play.unity.com/mg/other/match-3-beta-1
 
 ## Notes:
 - [ ] TODO: rewrite spawn system
