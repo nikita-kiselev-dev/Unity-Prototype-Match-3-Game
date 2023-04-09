@@ -12,7 +12,7 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     [SerializeField] public int xData;
     [SerializeField] public int yData;
     
-    public static Tile previousSelectedTile = null;
+    public static Tile PreviousSelectedTile = null;
     
     public int tileNumber;
     public bool isEmpty = false;
@@ -32,7 +32,7 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isEmpty || MainBoard.Instance.IsShifting)
+        if (isEmpty)
         {
             return;
         }
@@ -43,19 +43,19 @@ public class Tile : MonoBehaviour, IPointerDownHandler
         }
         else
         {
-            if (previousSelectedTile == null)
+            if (PreviousSelectedTile == null)
             {
                 Select();
             }
             else
             {
-                if (IsTileNearby() && (tileNumber != previousSelectedTile.tileNumber))
+                if (IsTileNearby() && (tileNumber != PreviousSelectedTile.tileNumber))
                 {
-                    MainBoard.Instance.SwapTiles(previousSelectedTile, this);
+                    MainBoard.Instance.SwapTiles(PreviousSelectedTile, this);
                 }
                 else
                 {
-                    Deselect(previousSelectedTile.gameObject);
+                    Deselect(PreviousSelectedTile.gameObject);
                     Debug.Log("They are the same!");
                 }
             }
@@ -65,22 +65,22 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     {
         isSelected = true;
         backgroundImage.color = new Color32(255,203,164,255);
-        previousSelectedTile = gameObject.GetComponent<Tile>();
+        PreviousSelectedTile = gameObject.GetComponent<Tile>();
     }
     private void Deselect(GameObject tile)
     {
         isSelected = false;
         tile.GetComponent<Image>().color = Color.white;
-        previousSelectedTile.isSelected = false;
-        previousSelectedTile = null;
+        PreviousSelectedTile.isSelected = false;
+        PreviousSelectedTile = null;
     }
     private bool IsTileNearby()
     {
-        bool isXTileNear = Math.Abs(xData - previousSelectedTile.xData) == 1;
+        bool isXTileNear = Math.Abs(xData - PreviousSelectedTile.xData) == 1;
 
-        bool isYTileNear = Math.Abs(yData - previousSelectedTile.yData) == 1;
+        bool isYTileNear = Math.Abs(yData - PreviousSelectedTile.yData) == 1;
 
-        if ((isXTileNear && (yData == previousSelectedTile.yData)) || (isYTileNear && (xData == previousSelectedTile.xData)))
+        if ((isXTileNear && (yData == PreviousSelectedTile.yData)) || (isYTileNear && (xData == PreviousSelectedTile.xData)))
         {
             return true;
         }

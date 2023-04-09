@@ -23,16 +23,15 @@ public class MainBoard : MonoBehaviour
     [SerializeField] private GameObject[] tileCommonPrefab;
     [SerializeField] private GameObject tileEmptyPrefab;
 
-    private bool isGameActive;
-    public bool IsShifting { get; set; }
-    private bool isMatch;
+    private bool _isGameActive;
+    private bool _isMatch;
 
-    private bool isCheckNeeded;
+    private bool _isCheckNeeded;
 
     [SerializeField] private GameObject[,] _mainBoardArr;
     [SerializeField] private GameObject mainBoard;
 
-    private InputController inputController;
+    private InputController _inputController;
     
     [SerializeField] private List<GameObject> matchingTilesVertical = new List<GameObject>();
     [SerializeField] private List<GameObject> matchingTilesHorizontal = new List<GameObject>();
@@ -40,27 +39,23 @@ public class MainBoard : MonoBehaviour
     private void Awake()
     {
         Instance = GetComponent<MainBoard>();
-        inputController = gameObject.GetComponent<InputController>();
+        _inputController = gameObject.GetComponent<InputController>();
     }
 
     public void StartGame()
     {
-        inputController.HideWarning();
-        if (isGameActive)
+        _inputController.HideWarning();
+        if (_isGameActive)
         {
             CleanMainBoard();
         }
-        pointsText.text = points.ToString();
         GetBoardStartInfo();
         BuildBoard(isRebuild: false);
-        //AddTiles();
-        isGameActive = true;
-        //FillTileArray();
-        //SpawnTile();
+        pointsText.text = points.ToString();
+        _isGameActive = true;
     }
-
-    //TODO make private
-    public void CleanMainBoard()
+    
+    private void CleanMainBoard()
     {
         foreach (Transform child in mainBoard.transform)
         {
@@ -70,13 +65,12 @@ public class MainBoard : MonoBehaviour
 
     private void GetBoardStartInfo()
     {
-        tileCountWidth = inputController.tileCountWidthInput;
-        tileCountHeight = inputController.tileCountHeightInput;
-        tileColorNumber = inputController.colorNumberInput;
+        tileCountWidth = _inputController.tileCountWidthInput;
+        tileCountHeight = _inputController.tileCountHeightInput;
+        tileColorNumber = _inputController.colorNumberInput;
     }
-
-    //TODO make private
-    public void BuildBoard(bool isRebuild)
+    
+    private void BuildBoard(bool isRebuild)
     {
         if (!isRebuild)
         {
@@ -119,7 +113,7 @@ public class MainBoard : MonoBehaviour
 
     public void SwapTiles(Tile previousSelectedTile, Tile currentTile)
     {
-        Tile tempGameObject = Tile.previousSelectedTile;
+        Tile tempGameObject = Tile.PreviousSelectedTile;
         _mainBoardArr[previousSelectedTile.yData, previousSelectedTile.xData] =
             _mainBoardArr[currentTile.yData, currentTile.xData];
         _mainBoardArr[currentTile.yData, currentTile.xData] =
@@ -288,7 +282,7 @@ public class MainBoard : MonoBehaviour
     }
 
     //TODO make private
-    public void EmptyTileMover()
+    private void EmptyTileMover()
     {
         for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
         {
@@ -333,7 +327,7 @@ public class MainBoard : MonoBehaviour
         return false;
     }
     
-    public IEnumerator MoveTileToGround()
+    private IEnumerator MoveTileToGround()
     {
         while (IsCheckNeeded())
         {
