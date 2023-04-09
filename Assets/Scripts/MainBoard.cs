@@ -10,10 +10,10 @@ public class MainBoard : MonoBehaviour
 {
     public static MainBoard Instance;
 
-    [SerializeField] private int points = 0;
+    private int _points = 0;
 
-    [SerializeField] private int tileCountWidth;
-    [SerializeField] private int tileCountHeight;
+    private int _tileCountWidth;
+    private int _tileCountHeight;
 
     [SerializeField] private TextMeshProUGUI pointsText;
     
@@ -28,22 +28,30 @@ public class MainBoard : MonoBehaviour
 
     private bool _isCheckNeeded;
 
-    [SerializeField] private GameObject[,] _mainBoardArr;
+    private GameObject[,] _mainBoardArr;
     [SerializeField] private GameObject mainBoard;
 
     private InputController _inputController;
     
-    [SerializeField] private List<GameObject> matchingTilesVertical = new List<GameObject>();
-    [SerializeField] private List<GameObject> matchingTilesHorizontal = new List<GameObject>();
+    private List<GameObject> _matchingTilesVertical = new List<GameObject>();
+    private List<GameObject> _matchingTilesHorizontal = new List<GameObject>();
 
     private void Awake()
     {
         Instance = GetComponent<MainBoard>();
         _inputController = gameObject.GetComponent<InputController>();
     }
-
+    //Получение данных об игровом поле от InputController
+    private void GetBoardStartInfo()
+    {
+        _tileCountWidth = _inputController.tileCountWidthInput;
+        _tileCountHeight = _inputController.tileCountHeightInput;
+        tileColorNumber = _inputController.colorNumberInput;
+    }
+    //Первый запуск игры
     public void StartGame()
     {
+        AudioController.Instance.PlaySound("start");
         _inputController.HideWarning();
         if (_isGameActive)
         {
@@ -51,10 +59,10 @@ public class MainBoard : MonoBehaviour
         }
         GetBoardStartInfo();
         BuildBoard(isRebuild: false);
-        pointsText.text = points.ToString();
+        pointsText.text = _points.ToString();
         _isGameActive = true;
     }
-    
+    //Очистка игрового поля от фишек
     private void CleanMainBoard()
     {
         foreach (Transform child in mainBoard.transform)
@@ -62,26 +70,19 @@ public class MainBoard : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
-
-    private void GetBoardStartInfo()
-    {
-        tileCountWidth = _inputController.tileCountWidthInput;
-        tileCountHeight = _inputController.tileCountHeightInput;
-        tileColorNumber = _inputController.colorNumberInput;
-    }
-    
+    //Построение игрового поля и instantiate игровых фишек
     private void BuildBoard(bool isRebuild)
     {
         if (!isRebuild)
         {
-            points = 0;
-            _mainBoardArr = new GameObject[tileCountHeight, tileCountWidth];
+            _points = 0;
+            _mainBoardArr = new GameObject[_tileCountHeight, _tileCountWidth];
         }
-        for (int heightIndex = 0; heightIndex < tileCountHeight; heightIndex++)
+        for (int heightIndex = 0; heightIndex < _tileCountHeight; heightIndex++)
         {
             GameObject tileRow = Instantiate(rowPrefab, mainBoard.transform);
             tileRow.name = $"[{heightIndex}] " + tileRow.name;
-            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            for (int widthIndex = 0; widthIndex < _tileCountWidth; widthIndex++)
             {
                 int tileNumber = 0;
                 if (!isRebuild)
@@ -103,14 +104,11 @@ public class MainBoard : MonoBehaviour
                 tileInfo.yData = heightIndex;
                 
                 _mainBoardArr[heightIndex, widthIndex] = tile;
-                //Debug.Log(_mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>().tileNumber);
-                //Debug.Log(_mainBoardArr[heightIndex, widthIndex].GetComponent<Tile>().isEmpty);
-                
             }
 
         }
     }
-
+    //Смена фишек местами
     public void SwapTiles(Tile previousSelectedTile, Tile currentTile)
     {
         Tile tempGameObject = Tile.PreviousSelectedTile;
@@ -120,21 +118,21 @@ public class MainBoard : MonoBehaviour
             tempGameObject.gameObject;
         CleanMainBoard();
         BuildBoard(isRebuild: true);
-        FindMatch(currentTile.yData, currentTile.xData);
-
-        GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
         AudioController.Instance.PlaySound("swap");
+        FindMatch(currentTile.yData, currentTile.xData);
+        GetMatchPoints();
+        StartCoroutine(MoveTileToGround());
     }
-
+    //Поиск 3 и более шифек в одном ряду с перемещенной фишкой
     private void FindMatch(int y, int x)
     {
-        matchingTilesVertical.Add(_mainBoardArr[y, x]);
+        _matchingTilesVertical.Add(_mainBoardArr[y, x]);
         
         for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
         {
             if (IsForwardTileMatches(i, "vertical"))
             {
-                matchingTilesVertical.Add(_mainBoardArr[i + 1, x]);
+                _matchingTilesVertical.Add(_mainBoardArr[i + 1, x]);
             }
             else
             {
@@ -145,25 +143,25 @@ public class MainBoard : MonoBehaviour
         {
             if (IsBackwardTileMatches(i, "vertical"))
             {
-                matchingTilesVertical.Add(_mainBoardArr[i - 1, x]);
+                _matchingTilesVertical.Add(_mainBoardArr[i - 1, x]);
             }
             else
             {
                 break;
             }
         }
-        if (!(matchingTilesVertical.Count >= 3))
+        if (!(_matchingTilesVertical.Count >= 3))
         {
-            matchingTilesVertical.Clear();
+            _matchingTilesVertical.Clear();
         }
 
-        matchingTilesHorizontal.Add(_mainBoardArr[y, x]);
+        _matchingTilesHorizontal.Add(_mainBoardArr[y, x]);
         
         for (int i = x; i < _mainBoardArr.GetLength(1) - 1; i++)
         {
             if (IsForwardTileMatches(i, "horizontal"))
             {
-                matchingTilesHorizontal.Add(_mainBoardArr[y , i + 1]);
+                _matchingTilesHorizontal.Add(_mainBoardArr[y , i + 1]);
             }
             else
             {
@@ -174,16 +172,16 @@ public class MainBoard : MonoBehaviour
         {
             if (IsBackwardTileMatches(i, "horizontal"))
             {
-                matchingTilesHorizontal.Add(_mainBoardArr[y, i - 1]);
+                _matchingTilesHorizontal.Add(_mainBoardArr[y, i - 1]);
             }
             else
             {
                 break;
             }
         }
-        if (!(matchingTilesHorizontal.Count >= 3))
+        if (!(_matchingTilesHorizontal.Count >= 3))
         {
-            matchingTilesHorizontal.Clear();
+            _matchingTilesHorizontal.Clear();
         }
 
         bool IsForwardTileMatches(int i, string orientation)
@@ -230,12 +228,12 @@ public class MainBoard : MonoBehaviour
             return false;
         }
     }
-
-    private void GetMatchPoints(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
+    //Получение очков за >=3 в ряд
+    private void GetMatchPoints()
     {
         bool MultipleAxisMatch()
         {
-            if (matchingTilesVertical.Count > 1 && matchingTilesHorizontal.Count > 1)
+            if (_matchingTilesVertical.Count > 1 && _matchingTilesHorizontal.Count > 1)
             {
                 return true;
             }
@@ -244,8 +242,8 @@ public class MainBoard : MonoBehaviour
         }
         
         List<GameObject> matchedTiles = new List<GameObject>();
-        matchedTiles.AddRange(matchingTilesVertical);
-        matchedTiles.AddRange(matchingTilesHorizontal);
+        matchedTiles.AddRange(_matchingTilesVertical);
+        matchedTiles.AddRange(_matchingTilesHorizontal);
 
         if (matchedTiles.Count > 1)
         {
@@ -254,18 +252,19 @@ public class MainBoard : MonoBehaviour
         
         if (MultipleAxisMatch())
         {
-            points += matchedTiles.Count - 1;
+            _points += matchedTiles.Count - 1;
         }
         else
         {
-            points += matchedTiles.Count;
+            _points += matchedTiles.Count;
         }
         
-        matchingTilesVertical.Clear();
-        matchingTilesHorizontal.Clear();
-        pointsText.text = points.ToString();
+        _matchingTilesVertical.Clear();
+        _matchingTilesHorizontal.Clear();
+        pointsText.text = _points.ToString();
         DestroyMatchTiles(matchedTiles);
     }
+    //Уничтожение фишек при сборке >=3 в ряд
     private void DestroyMatchTiles(List<GameObject> matchedTiles)
     {
         for (int i = 0; i < matchedTiles.Count; i++)
@@ -278,15 +277,14 @@ public class MainBoard : MonoBehaviour
         matchedTiles.Clear();
         CleanMainBoard();
         BuildBoard(isRebuild: true);
-        StartCoroutine(MoveTileToGround());
+        //StartCoroutine(MoveTileToGround());
     }
-
-    //TODO make private
+    //Перемещение заполненных клеток вниз, если снизу присутствует пустая клетка
     private void EmptyTileMover()
     {
-        for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
+        for (int heightIndex = 1; heightIndex < _tileCountHeight; heightIndex++)
         {
-            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            for (int widthIndex = 0; widthIndex < _tileCountWidth; widthIndex++)
             {
                 GameObject currentTileGameObject = _mainBoardArr[heightIndex, widthIndex];
                 GameObject upperTileGameObject = _mainBoardArr[heightIndex - 1, widthIndex];
@@ -296,7 +294,6 @@ public class MainBoard : MonoBehaviour
 
                 if (upperTile.isEmpty == false && currentTile.isEmpty)
                 {
-                    Debug.Log("recolor!");
                     _mainBoardArr[currentTile.yData, currentTile.xData] =
                         _mainBoardArr[upperTile.yData, upperTile.xData];
                     _mainBoardArr[upperTile.yData, upperTile.xData] = tileEmptyPrefab;
@@ -304,12 +301,12 @@ public class MainBoard : MonoBehaviour
             }
         }
     }
-
+    //Проверка на пустые клетки снизу
     private bool IsCheckNeeded()
     {
-        for (int heightIndex = 1; heightIndex < tileCountHeight; heightIndex++)
+        for (int heightIndex = 1; heightIndex < _tileCountHeight; heightIndex++)
         {
-            for (int widthIndex = 0; widthIndex < tileCountWidth; widthIndex++)
+            for (int widthIndex = 0; widthIndex < _tileCountWidth; widthIndex++)
             {
                 GameObject currentTileGameObject = _mainBoardArr[heightIndex, widthIndex];
                 GameObject upperTileGameObject = _mainBoardArr[heightIndex - 1, widthIndex];
@@ -326,12 +323,11 @@ public class MainBoard : MonoBehaviour
 
         return false;
     }
-    
+    //Корутина для анимации перемещения фишек
     private IEnumerator MoveTileToGround()
     {
         while (IsCheckNeeded())
         {
-            Debug.Log("Iteration");
             yield return new WaitForSeconds(0.03f);
             EmptyTileMover();
             CleanMainBoard();

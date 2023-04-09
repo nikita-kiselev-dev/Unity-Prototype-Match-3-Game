@@ -17,8 +17,8 @@ public class Tile : MonoBehaviour, IPointerDownHandler
     public int tileNumber;
     public bool isEmpty = false;
     [SerializeField] private bool isSelected = false;
-    //TODO make private
-    public Image backgroundImage;
+
+    private Image backgroundImage;
     private void Awake()
     {
         backgroundImage = gameObject.GetComponent<Image>();
@@ -30,6 +30,7 @@ public class Tile : MonoBehaviour, IPointerDownHandler
             isEmpty = true;
         }
     }
+    //Клик по фишкам
     public void OnPointerDown(PointerEventData eventData)
     {
         if (isEmpty)
@@ -56,17 +57,18 @@ public class Tile : MonoBehaviour, IPointerDownHandler
                 else
                 {
                     Deselect(PreviousSelectedTile.gameObject);
-                    Debug.Log("They are the same!");
                 }
             }
         }
     }
+    //Выбор фишки при клике
     private void Select()
     {
         isSelected = true;
         backgroundImage.color = new Color32(255,203,164,255);
         PreviousSelectedTile = gameObject.GetComponent<Tile>();
     }
+    //Отмена выбора фишки
     private void Deselect(GameObject tile)
     {
         isSelected = false;
@@ -74,6 +76,7 @@ public class Tile : MonoBehaviour, IPointerDownHandler
         PreviousSelectedTile.isSelected = false;
         PreviousSelectedTile = null;
     }
+    //Проверка близости двух выбранных фишек
     private bool IsTileNearby()
     {
         bool isXTileNear = Math.Abs(xData - PreviousSelectedTile.xData) == 1;

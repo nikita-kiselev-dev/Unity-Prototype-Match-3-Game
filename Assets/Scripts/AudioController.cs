@@ -9,10 +9,12 @@ public class AudioController : MonoBehaviour
     //[SerializeField] private AudioClip startSound;
     [SerializeField] private AudioClip tileSwapSound;
     [SerializeField] private AudioClip tileMatchSound;
+    [SerializeField] private AudioClip startSound;
 
     //[SerializeField] private AudioSource musicAudioSource;
     [SerializeField] private AudioSource swapAudioSource;
     [SerializeField] private AudioSource matchAudioSource;
+    [SerializeField] private AudioSource startAudioSource;
 
     private void Awake()
     {
@@ -29,10 +31,14 @@ public class AudioController : MonoBehaviour
         matchAudioSource.PlayOneShot(tileMatchSound);
     }
 
+    //Проигрывание выбранного звука
     public void PlaySound(string audioClipName)
     {
         switch (audioClipName)
         {
+            case "start":
+                startAudioSource.PlayOneShot(startSound);
+                break;
             case "swap":
                 swapAudioSource.PlayOneShot(tileSwapSound);
                 break;

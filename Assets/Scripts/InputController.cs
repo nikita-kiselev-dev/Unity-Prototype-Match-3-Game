@@ -30,6 +30,7 @@ public class InputController : MonoBehaviour
         colorNumberInput = int.Parse(colorNumber.text);
     }
 
+    //Сохранение ширины
     public void SaveWidth()
     {
         if (int.Parse(tileCountWidth.text) < MinSize)
@@ -47,6 +48,7 @@ public class InputController : MonoBehaviour
         tileCountWidthInput = int.Parse(tileCountWidth.text);
     }
 
+    //Сохранение высоты
     public void SaveHeight()
     {
         if (int.Parse(tileCountHeight.text) < MinSize)
@@ -64,6 +66,7 @@ public class InputController : MonoBehaviour
         tileCountHeightInput = int.Parse(tileCountHeight.text);
     }
 
+    //Сохранение кол-ва цветов
     public void SaveColor()
     {
         if (int.Parse(colorNumber.text) < MinColorNumber)
@@ -81,6 +84,7 @@ public class InputController : MonoBehaviour
         colorNumberInput = int.Parse(colorNumber.text);
     }
 
+    //Скрытие предупреждения
     public void HideWarning()
     {
         if (warningText.activeSelf)
