@@ -29,8 +29,16 @@ public class AudioController : MonoBehaviour
         matchAudioSource.PlayOneShot(tileMatchSound);
     }
 
-    public void PlaySound(AudioClip clip)
+    public void PlaySound(string audioClipName)
     {
-        //effectsAudioSource.PlayOneShot(clip);
+        switch (audioClipName)
+        {
+            case "swap":
+                swapAudioSource.PlayOneShot(tileSwapSound);
+                break;
+            case "match":
+                matchAudioSource.PlayOneShot(tileMatchSound);
+                break;
+        }
     }
 }

@@ -127,19 +127,15 @@ public class MainBoard : MonoBehaviour
         CleanMainBoard();
         BuildBoard(isRebuild: true);
         FindMatch(currentTile.yData, currentTile.xData);
-        //FindMatch(previousSelectedTile.yData, previousSelectedTile.xData);
+
         GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
-        AudioController.Instance.PlayTileSwapAudio();
+        AudioController.Instance.PlaySound("swap");
     }
 
     private void FindMatch(int y, int x)
     {
-        //List<GameObject> matchingTilesVertical = new List<GameObject>();
-        //List<GameObject> matchingTilesHorizontal = new List<GameObject>();
-        
         matchingTilesVertical.Add(_mainBoardArr[y, x]);
-
-        //////////
+        
         for (int i = y; i < _mainBoardArr.GetLength(0) - 1; i++)
         {
             if (IsForwardTileMatches(i, "vertical"))
@@ -162,15 +158,7 @@ public class MainBoard : MonoBehaviour
                 break;
             }
         }
-        if (matchingTilesVertical.Count >= 3)
-        {
-            foreach (var sameTile in matchingTilesVertical)
-            {
-                sameTile.GetComponent<Tile>().isEmpty = true;
-                ParticleController.Instance.PlayRandomMatchParticle(sameTile.gameObject);
-            }
-        }
-        else
+        if (!(matchingTilesVertical.Count >= 3))
         {
             matchingTilesVertical.Clear();
         }
@@ -199,19 +187,11 @@ public class MainBoard : MonoBehaviour
                 break;
             }
         }
-        if (matchingTilesHorizontal.Count >= 3)
-        {
-            foreach (var sameTile in matchingTilesHorizontal)
-            {
-                sameTile.GetComponent<Tile>().isEmpty = true;
-                ParticleController.Instance.PlayRandomMatchParticle(sameTile.gameObject);
-            }
-        }
-        else
+        if (!(matchingTilesHorizontal.Count >= 3))
         {
             matchingTilesHorizontal.Clear();
         }
-        
+
         bool IsForwardTileMatches(int i, string orientation)
         {
             switch (orientation)
@@ -255,7 +235,6 @@ public class MainBoard : MonoBehaviour
             }
             return false;
         }
-        //GetMatchPoints(matchingTilesVertical, matchingTilesHorizontal);
     }
 
     private void GetMatchPoints(List<GameObject> matchingTilesVertical, List<GameObject> matchingTilesHorizontal)
@@ -276,8 +255,7 @@ public class MainBoard : MonoBehaviour
 
         if (matchedTiles.Count > 1)
         {
-            AudioController.Instance.PlayTileMatchAudio();
-            //ParticleController.Instance.PlayRandomMatchParticle();
+            AudioController.Instance.PlaySound("match");
         }
         
         if (MultipleAxisMatch())
@@ -302,8 +280,6 @@ public class MainBoard : MonoBehaviour
             var tempYData = tempTile.yData;
             var tempXData = tempTile.xData;
             _mainBoardArr[tempYData, tempXData] = tileEmptyPrefab;
-            //ParticleController.Instance.PlayRandomMatchParticle(matchedTiles[i].gameObject);
-            //Debug.Log(_mainBoardArr[tempYData,tempXData].GetComponent<Tile>().isEmpty);
         }
         matchedTiles.Clear();
         CleanMainBoard();
